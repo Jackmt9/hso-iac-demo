@@ -27,10 +27,10 @@ function Deploy-AzureResources {
 }
 
 
-$tenantId = '<tenant'
-$subscription = '<sub>'
-$resourceGroup = '<rg>'
-$templateFile = '....main.bicep'
-$parameterFile = '...main.parameters-dev.json'
+$tenantId = 'd2a857ff-6cf1-4889-978d-db5ef44bf6fb'
+$subscription = '50a11edb-ee9d-49b5-94fc-235600aac576'
+$resourceGroup = 'rg-hso-iac-demo'
+$templateFile = 'resource-group\bicep\main.bicep'
+$parameterFile = 'resource-group\bicep\parameters\main.parameters-dev.json'
 
 Deploy-AzureResources -tenantId $tenantId -subscription $subscription -resourceGroup $resourceGroup -templateFile $templateFile -parameterFile $parameterFile

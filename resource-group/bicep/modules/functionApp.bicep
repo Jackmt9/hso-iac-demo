@@ -1,6 +1,7 @@
 // import all parameters here
 param functionApp object
-
+param applicationInsights object
+param keyVault object
 // Create storage account
 
 module modStorageAccount 'br/public:avm/res/storage/storage-account:0.9.1' = {
@@ -16,7 +17,7 @@ module modStorageAccount 'br/public:avm/res/storage/storage-account:0.9.1' = {
 
 // Create function app
 
-module modFunctionApp '<reference function app in avm module here>' = {
+module modFunctionApp 'br/public:avm/res/web/site:0.4.0' = {
   name: 'Func-${uniqueString(deployment().name)}'
   params: {
     name: functionApp.name
@@ -52,23 +53,48 @@ module modFunctionApp '<reference function app in avm module here>' = {
       AzureWebJobsStorage__blobServiceUri: 'https://${functionApp.storageAccount.name}.blob.${environment().suffixes.storage}'
       AzureWebJobsStorage__queueServiceUri: 'https://${functionApp.storageAccount.name}.queue.${environment().suffixes.storage}'
       AzureWebJobsStorage__tableServiceUri: 'https://${functionApp.storageAccount.name}.table.${environment().suffixes.storage}'
-      
     }
   }
+  dependsOn: [modStorageAccount]
   // insert depends on statement here (storage account needs to be created first)
 }
-
 
 // Role assignments on storage account for function app: 'Storage Queue Data Contributor', 'Storage Table Data Contributor', 'Storage Account Contributor', 'Storage Blob Data Owner'
 module modStorageRoleAssignment '../resources/storage/storage-account/role-assignments/main.hso.bicep' = {
   name: 'St-Role-${uniqueString(deployment().name)}'
   params: {
-    name: 
+    name: functionApp.storageAccount.name
     roleAssignments: [
       {
-        roleDefinitionIdOrName: 
-        principalId: //prinicpal of function app - use output of modFUnctionApp (modFunctionApp.output....)
+        roleDefinitionIdOrName: 'Storage Queue Data Contributor'
+        principalId: modFunctionApp.outputs.systemAssignedMIPrincipalId //prinicpal of function app - use output of modFUnctionApp (modFunctionApp.output....)
+      }
+      {
+        roleDefinitionIdOrName: 'Storage Table Data Contributor'
+        principalId: modFunctionApp.outputs.systemAssignedMIPrincipalId //prinicpal of function app - use output of modFUnctionApp (modFunctionApp.output....)
+      }
+      {
+        roleDefinitionIdOrName: 'Storage Account Contributor'
+        principalId: modFunctionApp.outputs.systemAssignedMIPrincipalId //prinicpal of function app - use output of modFUnctionApp (modFunctionApp.output....)
+      }
+      {
+        roleDefinitionIdOrName: 'Storage Blob Data Owner'
+        principalId: modFunctionApp.outputs.systemAssignedMIPrincipalId //prinicpal of function app - use output of modFUnctionApp (modFunctionApp.output....)
       }
     ]
   }
+}
+
+module modKeyVaultRoleAssignment '../resources/key-vault/vault/role-assignments/main.hso.bicep' = {
+  name: 'kv-role'
+  params: {
+    name: keyVault.name
+    roleAssignments: [
+      {
+        roleDefinitionIdOrName: 'Key Vault Secrets User'
+        principalId: modFunctionApp.outputs.systemAssignedMIPrincipalId
+      }
+    ]
+  }
+  //Assign role to function app to read secrets (key vault secret reader)
 }

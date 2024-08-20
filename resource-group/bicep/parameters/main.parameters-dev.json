@@ -1,13 +1,33 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-      "storageAccount": {
-        "value": { "name": "sthso321" }
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "applicationInsights": {
+      "value": {
+        "name": "appi-hso-jmt-dev-01"
       }
-      // "kind": {
-      //   "value": "StorageV2"
-      // }
+    },
+    "keyVault": {
+      "value": {
+        "name": "kv-hso-jmt-dev-02"
+      }
+    },
+    "logAnalytics": {
+      "value": { "name": "log-hso-jmt-dev-01" }
+    },
+    "appServicePlan": {
+      "value": { "name": "asp-hso-jmt-dev-01" }
+    },
+    "functionApp": {
+      "value": {
+        "storageAccount": {
+          "name": "sthsojmtdev01"
+        },
+        "appServicePlan": {
+          "name": "asp-hso-jmt-dev-01"
+        },
+        "name": "func-hso-jmt-dev-01"
+      }
     }
   }
-  
+}

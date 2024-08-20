@@ -1,12 +1,12 @@
 // import parameters
+param keyVault object
 
 // Create key vault
-module modKeyVault 'referencing avm module' = {
+module modKeyVault 'br/public:avm/res/key-vault/vault:0.7.1' = {
   name: 'Kv-${uniqueString(deployment().name)}'
   params: {
     name: keyVault.name
-    sku: keyVault.?sku
+    sku: 'standard'
     publicNetworkAccess: 'Enabled'
-    roleAssignments: // Assign role to function app to read secrets (key vault secret reader)
   }
 }

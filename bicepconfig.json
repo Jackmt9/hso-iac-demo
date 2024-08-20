@@ -1,4 +1,16 @@
 {
+  "analyzers": {
+    "core": {
+      "rules": {
+        "explicit-values-for-loc-params": {
+          "level": "off"
+        },
+        "no-deployments-resources": {
+          "level": "off"
+        }
+      }
+    }
+  },
   "moduleAliases": {
     "br": {
       "public": {
